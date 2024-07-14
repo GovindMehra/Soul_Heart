@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rewards Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        header {
+            background-color: #31234A;
+            color: red;
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        header img {
+            margin-left: 20px;
+        }
+        header h1 {
+            flex-grow: 1;
+            text-align: center;
+            margin: 0;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #50357d;
+        }
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+        nav a:hover {
+            background-color: red;
+            color: black;
+        }
+        .container {
+            padding: 20px;
+            background-color: #FF3131;
+            color: white;
+            text-align: center;
+        }
+        .container h2 {
+            font-size: 2em;
+        }
+        .stats {
+            margin: 20px 0;
+            font-size: 1.5em;
+        }
+        .stats span {
+            display: block;
+            margin: 10px 0;
+        }
+        .change-stars-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            cursor: pointer;
+            background-color: #50357d;
+            color: white;
+        }
+        .change-stars-button:hover {
+            background-color: red;
+            color: black;
+        }
+        /* Popup styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .popup input[type="number"] {
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+        .popup button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            cursor: pointer;
+            background-color: #50357d;
+            color: white;
+        }
+        .popup button:hover {
+            background-color: red;
+            color: black;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        .reward-button {
+            display: inline-block;
+            background-color: #50357d;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .reward-button:hover {
+            background-color: red;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="SOULHEART-removebg-preview.png" id="header-image" width="150" height="150" alt="SoulHeart Logo">
+        <h1>Welcome to SoulHeart</h1><br>
+    </header>
+    <nav>
+        <a href="./home.html">Home</a>
+        <a href="./chores.html">Add Chores</a>
+        <a href="./rewards.html">Rewards List</a>
+    </nav>
+    <div class="container">
+        <h2>Reward List</h2>
+        <select id="kidNameDropdown" onchange="updateStats()">
+            <!-- Options will be dynamically added here -->
+        </select>
+        <div class="stats">
+            <span id="choresCompleted">No. of Chores completed = 0</span>
+            <span id="starsEarned">No. of Stars earned = 0</span>
+            <span id="rewardsDue">No. of Rewards due = 0</span>
+            <span id="rewardsGiven">No. of Rewards given = 0</span>
+            <button class="reward-button" onclick="giveReward()">+</button>
+        </div>
+        <button class="change-stars-button" onclick="openPopup()">Change Stars Per Reward</button>
+    </div>
+    <!-- Popup for changing stars per reward -->
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+        <label for="starsPerReward">One reward is due every</label>
+        <input type="number" id="starsPerReward" value="5">
+        <label for="starsPerReward">stars earned</label>
+        <button onclick="updateStarsPerReward()">Change</button>
+        <button onclick="closePopup()">Close</button>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            fetchChoresData();
+        });
+
+        const kidStats = {};
+
+        function fetchChoresData() {
+            // Simulate fetching data from chores.html (you'd replace this with actual AJAX/Fetch request)
+            // For demonstration, using static data
+            const choresData = [
+                { kidName: "Shrot", choresCompleted: 8, starsEarned: 40, rewardsGiven: 0 },
+                { kidName: "Govind", choresCompleted: 10, starsEarned: 50, rewardsGiven: 0 },
+                { kidName: "Deep", choresCompleted: 2, starsEarned: 10, rewardsGiven: 0 }
+            ];
+
+            for (const data of choresData) {
+                kidStats[data.kidName] = {
+                    choresCompleted: data.choresCompleted,
+                    starsEarned: data.starsEarned,
+                    rewardsGiven: data.rewardsGiven,
+                    rewardsDue: Math.max(0, Math.floor(data.starsEarned / document.getElementById('starsPerReward').value))
+                };
+            }
+
+            populateKidNameDropdown();
+        }
+
+        function populateKidNameDropdown() {
+            const dropdown = document.getElementById('kidNameDropdown');
+            dropdown.innerHTML = ''; // Clear existing options
+
+            for (const kidName in kidStats) {
+                const option = document.createElement('option');
+                option.value = kidName;
+                option.text = kidName;
+                dropdown.add(option);
+            }
+
+            // Automatically select the first kid
+            dropdown.selectedIndex = 0;
+            updateStats();
+        }
+
+        function updateStats() {
+            const selectedKid = document.getElementById('kidNameDropdown').value;
+            const stats = kidStats[selectedKid] || { choresCompleted: 0, starsEarned: 0, rewardsDue: 0, rewardsGiven: 0 };
+
+            document.getElementById('choresCompleted').textContent = `No. of Chores completed = ${stats.choresCompleted}`;
+            document.getElementById('starsEarned').textContent = `No. of Stars earned = ${stats.starsEarned}`;
+            document.getElementById('rewardsDue').textContent = `No. of Rewards due = ${stats.rewardsDue}`;
+            document.getElementById('rewardsGiven').textContent = `No. of Rewards given = ${stats.rewardsGiven}`;
+        }
+
+        function giveReward() {
+            const selectedKid = document.getElementById('kidNameDropdown').value;
+            if (kidStats[selectedKid].rewardsDue > 0) {
+                kidStats[selectedKid].rewardsGiven++;
+                kidStats[selectedKid].rewardsDue--;
+                updateStats();
+            }
+        }
+
+        function openPopup() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        function updateStarsPerReward() {
+            const starsPerReward = document.getElementById('starsPerReward').value;
+            for (const kidName in kidStats) {
+                kidStats[kidName].rewardsDue = Math.max(0, Math.floor(kidStats[kidName].starsEarned / starsPerReward));
+            }
+            updateStats();
+            closePopup();
+        }
+    </script>
+</body>
+</html>

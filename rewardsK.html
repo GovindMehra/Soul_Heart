@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rewards Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        header {
+            background-color: #f5d93a;
+            color: red;
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        header img {
+            margin-left: 20px;
+        }
+        header h1 {
+            flex-grow: 1;
+            text-align: center;
+            margin: 0;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #bca62c;
+        }
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+        nav a:hover {
+            background-color: red;
+            color: black;
+        }
+        .container {
+            padding: 20px;
+            background-color: #FF3131;
+            color: white;
+            text-align: center;
+        }
+        .container h2 {
+            font-size: 2em;
+        }
+        .stats {
+            margin: 20px 0;
+            font-size: 1.5em;
+        }
+        .stats span {
+            display: block;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="SOULHEART-removebg-preview.png" id="header-image" width="150" height="150" alt="SoulHeart Logo">
+        <h1>Welcome to Your SoulHeart</h1>
+    </header>
+    <nav>
+        <a href="./homeK.html">Home</a>
+        <a href="./choresK.html">My Chores</a>
+        <a href="./rewardsK.html">My Rewards</a>
+    </nav>
+    <div class="container">
+        <h2>Your Reward Stats</h2>
+        <div class="stats">
+            <span id="choresCompleted">No. of Chores completed = 10</span>
+            <span id="rewardsDue">No. of Rewards due = 2</span>
+            <span id="rewardsGiven">No. of Rewards received = 0</span>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Chores</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        header {
+            background-color: #f5d93a;
+            color: red;
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        header img {
+            margin-left: 20px;
+        }
+        header h1 {
+            flex-grow: 1;
+            text-align: center;
+            margin: 0;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #bca62c;
+        }
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+        nav a:hover {
+            background-color: red;
+            color: black;
+        }
+        .container {
+            padding: 10px;
+            background-color: #FF3131;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 2px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #50357d;
+            color: white;
+        }
+        .complete-button {
+            background-color: #50357d;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 4px;
+        }
+        .complete-button:hover {
+            background-color: #311f4d;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="SOULHEART-removebg-preview.png" id="header-image" width="150" height="150" alt="SoulHeart Logo">
+        <h1>Welcome to SoulHeart</h1>
+    </header>
+    <nav>
+        <a href="./homeK.html">Home</a>
+        <a href="./choresK.html">My Chores</a>
+        <a href="./rewardsK.html">My Rewards</a>
+    </nav>
+    <div class="container">
+        <h2>My Chores</h2>
+        <table id="choreTable">
+            <thead>
+                <tr>
+                    <th>Chore Name</th>
+                    <th>Status</th>
+                    <th>No. of Stars</th>
+                    <th>Deadline</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be added dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Simulated initial data - replace with actual data fetch logic
+        let chores = [
+            { choreName: "Wash dishes", status: "Incomplete", stars: 3, deadline: "2024-07-20" },
+            { choreName: "Clean room", status: "Incomplete", stars: 5, deadline: "2024-07-15" },
+            { choreName: "Take out trash", status: "Incomplete", stars: 2, deadline: "2024-07-18" }
+        ];
+
+        // Function to fetch chore data and populate table
+        function fetchChores() {
+            const tbody = document.querySelector('#choreTable tbody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            // Append all chores to the table
+            chores.forEach(chore => {
+                appendChoreRow(chore);
+            });
+        }
+
+        // Function to add a chore row to the table
+        function appendChoreRow(chore) {
+            const tbody = document.querySelector('#choreTable tbody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${chore.choreName}</td>
+                <td>${chore.status}</td>
+                <td>${chore.stars}</td>
+                <td>${chore.deadline}</td>
+                <td>${getActionButton(chore)}</td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        // Function to determine the action button based on chore status and deadline
+        function getActionButton(chore) {
+            if (chore.status === 'Complete' || isDeadlinePassed(chore.deadline)) {
+                return '';
+            } else {
+                return `<button class="complete-button" onclick="markAsComplete(this)">Mark as Complete</button>`;
+            }
+        }
+
+        // Function to check if deadline is passed
+        function isDeadlinePassed(deadline) {
+            const today = new Date();
+            const choreDeadline = new Date(deadline);
+            return today > choreDeadline;
+        }
+
+        // Function to mark chore as complete
+        function markAsComplete(button) {
+            const row = button.parentNode.parentNode;
+            const choreIndex = Array.from(row.parentNode.children).indexOf(row);
+
+            // Update chore status to Complete or Failed to Complete
+            if (isDeadlinePassed(chores[choreIndex].deadline)) {
+                chores[choreIndex].status = 'Failed to Complete';
+            } else {
+                chores[choreIndex].status = 'Complete';
+            }
+
+            // Update status cell in the row
+            row.cells[1].textContent = chores[choreIndex].status;
+
+            // Remove action button from completed or failed chore
+            row.cells[4].innerHTML = '';
+
+            // Move completed or failed chore to the bottom of the list
+            const tbody = document.querySelector('#choreTable tbody');
+            tbody.appendChild(row);
+        }
+
+        // Fetch chores when page loads
+        fetchChores();
+    </script>
+</body>
+</html>
